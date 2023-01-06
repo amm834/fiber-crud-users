@@ -71,9 +71,57 @@ func main() {
 			return err
 		}
 		if err = cursor.All(context.Background(), &users); err != nil {
-			return c.Status(500).SendString(err.Error())
+			return c.Status(500).JSON(err.Error())
 		}
 		return c.JSON(users)
+	})
+
+	app.Post("/users", func(c *fiber.Ctx) error {
+		collection := connection.Db.Collection("users")
+		user := new(User)
+		if err := c.BodyParser(user); err != nil {
+			return c.Status(400).JSON(err.Error())
+		}
+		result, err := collection.InsertOne(context.Background(), user)
+		if err != nil {
+			return err
+		}
+		return c.Status(201).JSON(result)
+	})
+
+	app.Get("/users/:id", func(c *fiber.Ctx) error {
+		collection := connection.Db.Collection("users")
+		id, err := primitive.ObjectIDFromHex(c.Params("id"))
+		if err != nil {
+			return err
+		}
+		filter := bson.M{"_id": id}
+		var user User
+		err = collection.FindOne(context.Background(), filter).Decode(&user)
+		if err != nil {
+			return err
+		}
+		return c.JSON(user)
+	})
+
+	app.Put("/users/:id", func(c *fiber.Ctx) error {
+		collection := connection.Db.Collection("users")
+
+		id, err := primitive.ObjectIDFromHex(c.Params("id"))
+		if err != nil {
+			return err
+		}
+		user := new(User)
+		if err := c.BodyParser(user); err != nil {
+			return c.Status(400).JSON(err.Error())
+		}
+		filter := bson.M{"_id": id}
+		update := bson.M{"$set": bson.M{"name": user.Username, "age": user.Age}}
+		result, err := collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			return err
+		}
+		return c.Status(200).JSON(result)
 	})
 
 	log.Fatal(app.Listen(":8000"))
