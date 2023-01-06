@@ -17,6 +17,20 @@ go run main.go
 
 Sever will be running on port 8000
 
+## Hot Reload
+
+To enable hot reload, run the following command:
+
+```bash
+go install github.com/cosmtrek/air
+```
+
+```bash
+air
+```
+
+Above command will start the server on port 8000 and will reload the server on any changes in the code.
+
 ## API Documentation
 
 ### Create a new user
