@@ -124,5 +124,20 @@ func main() {
 		return c.Status(200).JSON(result)
 	})
 
+	app.Delete("/users/:id", func(c *fiber.Ctx) error {
+		collection := connection.Db.Collection("users")
+		id, err := primitive.ObjectIDFromHex(c.Params("id"))
+		if err != nil {
+			return err
+		}
+		filter := bson.M{"_id": id}
+		result, err := collection.DeleteOne(context.Background(), filter)
+		if err != nil {
+			return err
+		}
+
+		return c.Status(204).JSON(result)
+	})
+
 	log.Fatal(app.Listen(":8000"))
 }
