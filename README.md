@@ -3,7 +3,8 @@
 ## Installation
 
 ```bash
-go get github.com/gofiber/fiber
+git clone git@github.com:amm834/fiber-crud-users.git
+
 ```
 
 ## Usage
@@ -11,8 +12,8 @@ go get github.com/gofiber/fiber
 To serve a the server, run the following command:
 
 ```bash
-```go
 go run main.go
+
 ```
 
 Sever will be running on port 8000
